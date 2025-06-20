@@ -82,4 +82,72 @@ export async function getUserAccountWithTransactions(accountId) {
       ...serializeTransaction(account),
       transactions: account.transactions.map(serializeTransaction),
     };
-  }
+}
+
+export async function bulkDeleteTransactions(transactionIds){
+    try{
+        const {userId}=await auth();
+        if(!userId) throw new Error("User not authenticated");
+
+        const user=await db.user.findUnique({
+            where:{clerkUserId:userId},
+        });
+
+        if(!user) throw new Error("User not found");
+
+
+        const transactions = await db.transaction.findMany({
+            where:{
+                id:{in:transactionIds},
+                userId:user.id,
+            },
+        });
+
+        const accountBalanceChanges=transactions.reduce((acc,transaction)=>{
+            const change=
+                transaction.type=="EXPENSE"
+                ? transaction.amount
+                : -transaction.amount;
+            
+            acc[transaction.accountId]=(acc[transaction.accountId] || 0)+change;
+            return acc;
+            
+        
+        },{});
+
+
+        await db.$transaction(async (tx)=>{
+            await tx.transaction.deleteMany({
+                where:{
+                    id:{in:transactionIds},
+                    userId:user.id,
+                },
+            });
+
+            for (const [accountId,balanceChange] of Object.entries(accountBalanceChanges)){
+                await tx.account.update({
+                    where:{
+                        id:accountId,
+                        userId:user.id,
+                    },
+                    data:{
+                        balance:{
+                            increment:balanceChange,
+                        },
+                    },
+                });
+            }
+
+
+        });
+
+        revalidatePath("/dashboard");
+        revalidatePath("/account/[id]");
+        
+        return {success:true};
+
+    }catch(error){
+
+        return {success:false,error:error.message};
+    }
+}

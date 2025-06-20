@@ -20,7 +20,7 @@ const AccountsPage=async ({params})=>{
 
   return (
     <div>
-        <div className="mt-25 font-sm text-red-500">
+        <div className="mt-25 ml-25 font-sm text-red-500">
             <div className="space-y-8 px-5">
                 <div className="flex gap-4 items-end justify-between">
                     <div>
@@ -33,7 +33,7 @@ const AccountsPage=async ({params})=>{
                         </p>
                     </div>
 
-                    <div className="text-right pb-2">
+                    <div className="text-right pb-2 mr-25">
                         <div className="text-xl sm:text-2xl font-bold">
                             ${parseFloat(account.balance).toFixed(2)}
                         </div>
