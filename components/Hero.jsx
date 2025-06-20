@@ -44,7 +44,7 @@ const Hero = () => {
                 <Link href="/dashboard">
                     <Button size="lg" className="px-8">Get Started</Button>
                 </Link>
-                <Link href="/google.com">
+                <Link href="https://github.com/Soumitra945/WealthWise.git">
                     <Button size="lg" className="px-8">Visit Project</Button>
                 </Link>
             </div>
