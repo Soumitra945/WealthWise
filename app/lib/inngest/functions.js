@@ -1,5 +1,8 @@
+
 import { db } from "@/lib/prisma";
 import { inngest } from "./client";
+import { sendEmail } from "@/actions/send-email";
+import EmailTemplate from "@/emails/template";
 
 export const checkBudgetAlert = inngest.createFunction(
   { id: "Check Budget Alerts" },
@@ -32,6 +35,7 @@ export const checkBudgetAlert = inngest.createFunction(
             const expenses=await db.transaction.aggregate({
                 where:{
                     userId:budget.userId,
+                    accountId:defaultAccount.id,
                     type:"EXPENSE",
                     date:{
                         gte:startDate,
@@ -45,17 +49,31 @@ export const checkBudgetAlert = inngest.createFunction(
             const totalExpenses = expenses._sum.amount?.toNumber() || 0; 
             const budgetAmount=budget.amount;
             const percentageUsed = (totalExpenses / budgetAmount) * 100;
+            //console.log(`Budget ID: ${budget.id}, Percentage Used: ${percentageUsed}%`);
 
-            if(percentageUsed>=80 && (!budget.lastAlertSent || !isNewMonth(new Date(budget.lastAlertSent),new Date())))
+            if(percentageUsed>=80 && (!budget.lastAlertSent || isNewMonth(new Date(budget.lastAlertSent), new Date())))
             {
-                await db.budget.update({
-                    where:{
-                        id:budget.id,
-                    },
-                    data:{
-                        lastAlertSent:new Date()
-                    },
-                });
+                await step.log("✅ Condition met. Sending email and updating lastAlertSent...");
+                await sendEmail({
+                    to: budget.user.email,
+                    subject: `Budget Alert for ${defaultAccount.name}`,
+                    react: EmailTemplate({
+                      userName: budget.user.name,
+                      type: "budget-alert",
+                      data: {
+                        percentageUsed,
+                        budgetAmount: parseInt(budgetAmount).toFixed(1),
+                        totalExpenses: parseInt(totalExpenses).toFixed(1),
+                        accountName: defaultAccount.name,
+                      },
+                    }),
+                  });
+        
+                  // Update last alert sent
+                  await db.budget.update({
+                    where: { id: budget.id },
+                    data: { lastAlertSent: new Date()},
+                  });
             }
         });
     }
