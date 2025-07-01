@@ -36,6 +36,7 @@
     "react-hook-form": "^7.58.1",
     "react-spinners": "^0.17.0",
     "recharts": "^2.15.4",
+    "resend": "^4.6.0",
     "sonner": "^2.0.5",
     "tailwind-merge": "^3.3.0",
     "vaul": "^1.1.2",
@@ -44,6 +45,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "babel-plugin-module-resolver": "^5.0.2",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
     "prisma": "^6.9.0",
