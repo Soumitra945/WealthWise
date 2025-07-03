@@ -7,7 +7,6 @@ import { CalendarIcon, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { useRouter, useSearchParams } from "next/navigation";
 import useFetch from "@/hooks/use-fetch";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,11 +24,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { CreateAccountDrawer } from "@/components/create-account-drawer";
+import { CreateAccountDrawer } from "@/components/ui/create-account-drawer";
 import { cn } from "@/lib/utils";
-import { createTransaction, updateTransaction } from "@/actions/transaction";
+import { createTransaction, updateTransaction } from "@/actions/transactions";
 import { transactionSchema } from "@/app/lib/schema";
-import { ReceiptScanner } from "./recipt-scanner";
+import ReceiptScanner from "./receipt-scanner";
+import { toast } from "sonner";
 
 export function AddTransactionForm({
   accounts,
@@ -108,6 +108,7 @@ export function AddTransactionForm({
     }
   };
 
+
   useEffect(() => {
     if (transactionResult?.success && !transactionLoading) {
       toast.success(
@@ -134,13 +135,13 @@ export function AddTransactionForm({
       {!editMode && <ReceiptScanner onScanComplete={handleScanComplete} />}
 
       {/* Type */}
-      <div className="space-y-2">
+      <div className="space-y-2 ">
         <label className="text-sm font-medium">Type</label>
         <Select
           onValueChange={(value) => setValue("type", value)}
           defaultValue={type}
         >
-          <SelectTrigger>
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="Select type" />
           </SelectTrigger>
           <SelectContent>
@@ -200,13 +201,13 @@ export function AddTransactionForm({
       </div>
 
       {/* Category */}
-      <div className="space-y-2">
+      <div className="space-y-2 w-full">
         <label className="text-sm font-medium">Category</label>
         <Select
           onValueChange={(value) => setValue("category", value)}
           defaultValue={getValues("category")}
         >
-          <SelectTrigger>
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="Select category" />
           </SelectTrigger>
           <SelectContent>
@@ -304,17 +305,16 @@ export function AddTransactionForm({
         </div>
       )}
 
-      {/* Actions */}
-      <div className="flex gap-4">
+      <div className="flex gap-4 justify-center">
         <Button
           type="button"
           variant="outline"
-          className="w-full"
+          className="flex-1 sm:w-3/4"
           onClick={() => router.back()}
         >
           Cancel
         </Button>
-        <Button type="submit" className="w-full" disabled={transactionLoading}>
+        <Button type="submit" className="flex-1 sm:w-3/4" disabled={transactionLoading}>
           {transactionLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
