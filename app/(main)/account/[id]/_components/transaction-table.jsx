@@ -135,7 +135,7 @@ const TransactionTable = ({transactions}) => {
         setSortConfig((current)=>({
             field,
             direction:
-            current.field==field && current.direction==="asc" ? "dsc":"asc",
+            current.field==field && current.direction==="asc" ? "desc":"asc",
         }));
     }
 
@@ -190,8 +190,8 @@ const TransactionTable = ({transactions}) => {
                 <SelectValue placeholder="All types" />
             </SelectTrigger>
             <SelectContent>
-                <SelectItem value="light">Income</SelectItem>
-                <SelectItem value="dark">Expense</SelectItem>
+                <SelectItem value="INCOME">Income</SelectItem>  
+                <SelectItem value="EXPENSE">Expense</SelectItem>
             </SelectContent>
         </Select>
 
@@ -376,11 +376,11 @@ const TransactionTable = ({transactions}) => {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent>
                                         <DropdownMenuItem
-                                            onClick={()=>
+                                            onClick={() =>
                                                 router.push(
-                                                    `/transaction/create?edit={transaction.id}`
+                                                  `/transaction/create?edit=${transaction.id}` // Fixed: removed curly braces
                                                 )
-                                            }>
+                                              }>
                                             Edit
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />

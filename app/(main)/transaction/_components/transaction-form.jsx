@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon, Loader2 } from "lucide-react";
@@ -72,6 +72,7 @@ export function AddTransactionForm({
             accountId: accounts.find((ac) => ac.isDefault)?.id,
             date: new Date(),
             isRecurring: false,
+            category: "", // Add default category value
           },
   });
 
@@ -82,10 +83,14 @@ export function AddTransactionForm({
   } = useFetch(editMode ? updateTransaction : createTransaction);
 
   const onSubmit = (data) => {
+    console.log("Form submitted with data:", data); // Debug log
+    
     const formData = {
       ...data,
       amount: parseFloat(data.amount),
     };
+    
+    console.log("Processed form data:", formData); // Debug log
 
     if (editMode) {
       transactionFn(editId, formData);
@@ -94,36 +99,90 @@ export function AddTransactionForm({
     }
   };
 
-  const handleScanComplete = (scannedData) => {
+  const handleScanComplete = useCallback((scannedData) => {
+    console.log("handleScanComplete called with:", scannedData);
+    
     if (scannedData) {
+      // Set the amount
+      console.log("Setting amount:", scannedData.amount.toString());
       setValue("amount", scannedData.amount.toString());
+      
+      // Set the date
+      console.log("Setting date:", new Date(scannedData.date));
       setValue("date", new Date(scannedData.date));
+      
+      // Set description if available
       if (scannedData.description) {
+        console.log("Setting description:", scannedData.description);
         setValue("description", scannedData.description);
       }
+      
+      // Set type to EXPENSE (since receipts are typically expenses)
+      console.log("Setting type: EXPENSE");
+      setValue("type", "EXPENSE");
+      
+      // Find and set the category
       if (scannedData.category) {
-        setValue("category", scannedData.category);
+        console.log("Looking for category:", scannedData.category);
+        console.log("Available categories:", categories);
+        
+        // Find the category by name/id that matches the scanned category
+        const matchingCategory = categories.find(
+          (cat) => 
+            cat.name.toLowerCase() === scannedData.category.toLowerCase() ||
+            cat.id === scannedData.category ||
+            cat.name.toLowerCase().includes(scannedData.category.toLowerCase())
+        );
+        
+        if (matchingCategory) {
+          console.log("Found matching category:", matchingCategory);
+          setValue("category", matchingCategory.id);
+          console.log("Category set to:", matchingCategory.id);
+        } else {
+          console.log("No matching category found for:", scannedData.category);
+          console.log("Available category names:", categories.map(cat => cat.name));
+          toast.warning("Category not found. Please select a category manually.");
+        }
+      } else {
+        console.log("No category in scanned data");
       }
+      
+      // Debug: Log all current form values after setting
+      setTimeout(() => {
+        console.log("Current form values after scan:", getValues());
+      }, 100);
+      
       toast.success("Receipt scanned successfully");
     }
-  };
-
+  }, [categories, setValue, getValues]);
 
   useEffect(() => {
+    console.log("Transaction result:", transactionResult); // Debug log
+    console.log("Transaction loading:", transactionLoading); // Debug log
+    
     if (transactionResult?.success && !transactionLoading) {
+      console.log("Transaction created successfully:", transactionResult.data); // Debug log
       toast.success(
         editMode
           ? "Transaction updated successfully"
           : "Transaction created successfully"
       );
-      reset();
-      router.push(`/account/${transactionResult.data.accountId}`);
+      
+      // Add a small delay before redirect to ensure transaction is saved
+      setTimeout(() => {
+        reset();
+        router.push(`/account/${transactionResult.data.accountId}`);
+      }, 1000);
+    } else if (transactionResult?.error && !transactionLoading) {
+      console.error("Transaction error:", transactionResult.error); // Debug log
+      toast.error(transactionResult.error.message || "Failed to create transaction");
     }
   }, [transactionResult, transactionLoading, editMode]);
 
   const type = watch("type");
   const isRecurring = watch("isRecurring");
   const date = watch("date");
+  const selectedCategory = watch("category");
 
   const filteredCategories = categories.filter(
     (category) => category.type === type
@@ -135,11 +194,15 @@ export function AddTransactionForm({
       {!editMode && <ReceiptScanner onScanComplete={handleScanComplete} />}
 
       {/* Type */}
-      <div className="space-y-2 ">
+      <div className="space-y-2">
         <label className="text-sm font-medium">Type</label>
         <Select
-          onValueChange={(value) => setValue("type", value)}
-          defaultValue={type}
+          onValueChange={(value) => {
+            setValue("type", value);
+            // Reset category when type changes
+            setValue("category", "");
+          }}
+          value={type}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select type" />
@@ -173,7 +236,7 @@ export function AddTransactionForm({
           <label className="text-sm font-medium">Account</label>
           <Select
             onValueChange={(value) => setValue("accountId", value)}
-            defaultValue={getValues("accountId")}
+            value={getValues("accountId")}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select account" />
@@ -205,7 +268,7 @@ export function AddTransactionForm({
         <label className="text-sm font-medium">Category</label>
         <Select
           onValueChange={(value) => setValue("category", value)}
-          defaultValue={getValues("category")}
+          value={selectedCategory}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select category" />
@@ -285,7 +348,7 @@ export function AddTransactionForm({
           <label className="text-sm font-medium">Recurring Interval</label>
           <Select
             onValueChange={(value) => setValue("recurringInterval", value)}
-            defaultValue={getValues("recurringInterval")}
+            value={getValues("recurringInterval")}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select interval" />

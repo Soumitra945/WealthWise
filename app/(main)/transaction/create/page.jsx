@@ -2,17 +2,32 @@ import { defaultCategories } from '@/data/categories'
 import React from 'react'
 import { getUserAccounts } from '@/actions/dashboard'
 import { AddTransactionForm } from '../_components/transaction-form';
+import { getTransaction } from '@/actions/transactions';
 
 const AddTransactionPage=async ({searchParams})=>{
 
   const accounts = await getUserAccounts();
-  const editId = searchParams?.edit;
+  const editId = await searchParams?.edit;
+
+  console.log('Edit ID:', editId);
 
   let initialData = null;
-  if (editId) {
+if (editId) {
+  try {
     const transaction = await getTransaction(editId);
-    initialData = transaction;
+
+    initialData = {
+      ...transaction,
+      account: {
+        ...transaction.account,
+        balance: transaction.account.balance ? parseFloat(transaction.account.balance.toString()) : 0, // Convert Decimal to plain number
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching transaction:', error.message);
+    initialData = null;
   }
+}
 
   return (
     <div className="max-w-3xl mx-auto px-5">
