@@ -12,27 +12,30 @@ const AddTransactionPage=async ({searchParams})=>{
   console.log('Edit ID:', editId);
 
   let initialData = null;
-if (editId) {
-  try {
-    const transaction = await getTransaction(editId);
+  if (editId) {
+    try {
+      const transaction = await getTransaction(editId);
 
-    initialData = {
-      ...transaction,
-      account: {
-        ...transaction.account,
-        balance: transaction.account.balance ? parseFloat(transaction.account.balance.toString()) : 0, // Convert Decimal to plain number
-      },
-    };
-  } catch (error) {
-    console.error('Error fetching transaction:', error.message);
-    initialData = null;
+      initialData = {
+        ...transaction,
+        account: {
+          ...transaction.account,
+          balance: transaction.account.balance ? parseFloat(transaction.account.balance.toString()) : 0, // Convert Decimal to plain number
+        },
+      };
+    } catch (error) {
+      console.error('Error fetching transaction:', error.message);
+      initialData = null;
+    }
   }
-}
+
+  const isEditMode = !!editId;
+  const pageTitle = isEditMode ? "Edit Transaction" : "Add Transaction";
 
   return (
     <div className="max-w-3xl mx-auto px-5">
       <div className="flex justify-center md:justify-normal mb-8">
-        <h1 className="text-5xl gradient-title ">Add Transaction</h1>
+        <h1 className="text-5xl gradient-title ">{pageTitle}</h1>
       </div>
       <AddTransactionForm
         accounts={accounts}
