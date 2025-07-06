@@ -104,3 +104,14 @@ export async function getUserAccounts(){
      return serializedAccount;
 
 }
+
+export async function getDashboardData(){
+
+    const transactions=await db.transactions.finMany({
+        where:{userId:user.id},
+        orderBy:{date:"desc"},
+    });
+
+    return transactions.map(serializeTransaction);
+
+}
