@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { getUserAccounts } from "@/actions/dashboard";
+import { getDashboardData, getUserAccounts } from "@/actions/dashboard";
 // import { getDashboardData } from "@/actions/dashboard";
 import { getCurrentBudget } from "@/actions/budget";
 import { BudgetProgress } from "./_components/budget-progress";
@@ -12,6 +12,7 @@ import DashboardOverview from "./_components/transaction-overview";
 export default async function DashboardPage() {
   const [accounts, transactions] = await Promise.all([
     getUserAccounts(),
+    getDashboardData(),
   ]);
 
   const defaultAccount = accounts?.find((account) => account.isDefault);
@@ -32,7 +33,7 @@ export default async function DashboardPage() {
 
       {/* Dashboard Overview */}
       <Suspense fallback={"Loading overview"}>
-      <DashboardOverview accounts={accounts} transactions={transactions || []} />
+          <DashboardOverview accounts={accounts} transactions={transactions || []} />
       </Suspense>
 
       {/* Accounts Grid */}

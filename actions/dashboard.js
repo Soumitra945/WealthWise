@@ -74,43 +74,59 @@ export async function createAccount(data){
 
 }
 
-export async function getUserAccounts(){
-
-    const {userId}=await auth();
-
-     if(!userId) throw new Error("User not authenticated");
-
-
-     const user=await db.user.findUnique({
-        where:{clerkUserId:userId},
-     });
-
-     if(!user) throw new Error("User not found");
-
-     const accounts=await db.account.findMany({
-        where:{userId:user.id},
-        orderBy:{createdAt:"desc"},
-        include:{
-            _count:{
-                select:{
-                    transactions:true,
-                }
-            }
-        }
-     });
-
-     const serializedAccount=accounts.map(serializeTransaction);
-
-     return serializedAccount;
-
-}
-
+export async function getUserAccounts() {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+  
+    const user = await db.user.findUnique({
+      where: { clerkUserId: userId },
+    });
+  
+    if (!user) {
+      throw new Error("User not found");
+    }
+  
+    try {
+      const accounts = await db.account.findMany({
+        where: { userId: user.id },
+        orderBy: { createdAt: "desc" },
+        include: {
+          _count: {
+            select: {
+              transactions: true,
+            },
+          },
+        },
+      });
+  
+      const serializedAccounts = accounts.map(serializeTransaction);
+  
+      return serializedAccounts;
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
 export async function getDashboardData(){
 
-    const transactions=await db.transactions.finMany({
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await db.user.findUnique({
+        where: { clerkUserId: userId },
+    });
+
+    if (!user) {
+        throw new Error("User not found");
+    }
+
+    const transactions=await db.transaction.findMany({
         where:{userId:user.id},
         orderBy:{date:"desc"},
     });
+
+    if (!Array.isArray(transactions)) {
+        throw new TypeError("Expected transactions to be an array");
+    }    
 
     return transactions.map(serializeTransaction);
 
