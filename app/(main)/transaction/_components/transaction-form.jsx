@@ -189,7 +189,7 @@ export function AddTransactionForm({
   );
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 text-white">
       {/* Receipt Scanner - Only show in create mode */}
       {!editMode && <ReceiptScanner onScanComplete={handleScanComplete} />}
 
@@ -372,7 +372,7 @@ export function AddTransactionForm({
         <Button
           type="button"
           variant="outline"
-          className="flex-1 sm:w-3/4"
+          className="flex-1 sm:w-3/4 text-black"
           onClick={() => router.back()}
         >
           Cancel

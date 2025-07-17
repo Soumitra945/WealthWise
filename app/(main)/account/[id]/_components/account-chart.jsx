@@ -64,7 +64,7 @@ import { Bar, BarChart, CartesianGrid, Legend, Rectangle, ResponsiveContainer, T
       }, [filteredData]);
 
   return (
-    <div className="ml-30 mr-30">
+    <div className="ml-30 mr-30 text-white">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7">
               <CardTitle className="text-base font-normal">

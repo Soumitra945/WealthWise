@@ -24,7 +24,7 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 py-4">
       {/* Budget Progress */}
       <BudgetProgress
         initialBudget={budgetData?.budget}
