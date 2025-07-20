@@ -227,7 +227,7 @@
 }
 
 .gradient-title {
-  background: linear-gradient(135deg, #cbf804 0%, #0400ff 50%, hsl(310, 100%, 50%) 100%);
+  background: linear-gradient(135deg, #2d04f8 0%, #fbff00 50%, hsl(135, 100%, 50%) 100%);
   background-size: 150%; /* Ensures the gradient moves smoothly */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

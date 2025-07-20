@@ -194,12 +194,11 @@ export function AddTransactionForm({
       {!editMode && <ReceiptScanner onScanComplete={handleScanComplete} />}
 
       {/* Type */}
-      <div className="space-y-2">
+      <div className="space-y-2 text-white">
         <label className="text-sm font-medium">Type</label>
         <Select
           onValueChange={(value) => {
             setValue("type", value);
-            // Reset category when type changes
             setValue("category", "");
           }}
           value={type}
@@ -218,7 +217,7 @@ export function AddTransactionForm({
       </div>
 
       {/* Amount and Account */}
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-2 text-white">
         <div className="space-y-2">
           <label className="text-sm font-medium">Amount</label>
           <Input
@@ -287,8 +286,8 @@ export function AddTransactionForm({
       </div>
 
       {/* Date */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Date</label>
+      <div className="space-y-2 text-black">
+        <label className="text-sm font-medium text-white">Date</label>
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -299,7 +298,7 @@ export function AddTransactionForm({
               )}
             >
               {date ? format(date, "PPP") : <span>Pick a date</span>}
-              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+              <CalendarIcon className="ml-auto h-4 w-4 opacity-50 text-black" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
@@ -310,7 +309,7 @@ export function AddTransactionForm({
               disabled={(date) =>
                 date > new Date() || date < new Date("1900-01-01")
               }
-              initialFocus
+              initialFocus 
             />
           </PopoverContent>
         </Popover>

@@ -24,14 +24,11 @@ const Header = async () => {
     {/* Right Section */}
     <div className="flex items-center space-x-4">
           <SignedIn>
-          <ul className="hidden md:flex space-x-8">
-            <li><a href="/dashboard" className="text-white hover:text-cyan-400 transition-colors">Dashboard</a></li>
-            <li><a href="#trading" className="text-white hover:text-cyan-400 transition-colors">Trading</a></li>
-            <li><a href="#portfolio" className="text-white hover:text-cyan-400 transition-colors">Portfolio</a></li>
-            <li><a href="#analytics" className="text-white hover:text-cyan-400 transition-colors">Analytics</a></li>
-          </ul>
-          <button className="bg-gradient-to-r from-red-400 to-white-500 text-white px-6 py-3 rounded-full font-bold hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-400/30 transition-all">
+          <button className="bg-gradient-to-r from-red-400 to-black-100 text-white px-6 py-3 rounded-full font-bold hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-400/30 transition-all">
             <a href="/dashboard">Dashboard</a>
+          </button>
+          <button className="bg-gradient-to-r from-red-400 to-white-500 text-white px-6 py-3 rounded-full font-bold hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-cyan-400/30 transition-all">
+            <a href="/transaction/create">Add transaction</a>
           </button>
           </SignedIn>
           <SignedOut>
