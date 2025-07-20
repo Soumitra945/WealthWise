@@ -95,7 +95,7 @@
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/wealthwise.git
+git clone https://github.com/Soumitra945/wealthwise.git
 cd wealthwise
 ```
 
