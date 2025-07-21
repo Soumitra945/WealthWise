@@ -16,8 +16,8 @@ const Header = async () => {
     <div className="mb-25 fixed top-0 w-full h-auto bg-gradient-to-brbg-gradient-to-br from-gray-900 via-blue-900 to-slate-800 backdrop-blur-md z-50 border-b">
     <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
     {/* Logo */}
-    <div className="text-4xl font-bold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 hover:from-pink-500 hover:to-blue-400 transition duration-300 ">
-      <a href="/" className="text-4xl font-bold text-cyan-400 hover:text-cyan-300">
+    <div className="text-4xl font-bold tracking-wide text-transparent bg-clip-text">
+      <a href="/" className="text-4xl font-bold text-white">
           WealthWise
       </a>
     </div>
